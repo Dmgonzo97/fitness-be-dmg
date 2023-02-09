@@ -7,9 +7,9 @@ import os
 
 app = Flask(__name__)
 
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bpqjwuibujsjsv:ebe943c91f8fe980a0bfb7b8fe03ca0a85f38d67e9242e4719ee08a9118bbcb8@ec2-52-201-124-168.compute-1.amazonaws.com:5432/d9l4vjjahr66n'
+# basedir = os.path.abspath(os.path.dirname(__file__))
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bpqjwuibujsjsv:ebe943c91f8fe980a0bfb7b8fe03ca0a85f38d67e9242e4719ee08a9118bbcb8@ec2-52-201-124-168.compute-1.amazonaws.com:5432/d9l4vjjahr66n'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 bcrypt = Bcrypt(app)
