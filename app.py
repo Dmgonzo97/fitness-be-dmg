@@ -3,16 +3,23 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow 
 from flask_cors import CORS 
 from flask_bcrypt import Bcrypt
+from flask_jwt_extended import create_access_token
+from flask_jwt_extended import get_jwt_identity
+from flask_jwt_extended import jwt_required
+from flask_jwt_extended import JWTManager
+
 import os
 
 app = Flask(__name__)
 
-# basedir = os.path.abspath(os.path.dirname(__file__))
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bpqjwuibujsjsv:ebe943c91f8fe980a0bfb7b8fe03ca0a85f38d67e9242e4719ee08a9118bbcb8@ec2-52-201-124-168.compute-1.amazonaws.com:5432/d9l4vjjahr66n'
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bpqjwuibujsjsv:ebe943c91f8fe980a0bfb7b8fe03ca0a85f38d67e9242e4719ee08a9118bbcb8@ec2-52-201-124-168.compute-1.amazonaws.com:5432/d9l4vjjahr66n'
+app.config['JWT_SECRET_KEY'] = 'asdkjfhasdiukfgafsubfdhjkfbajskdfhakjsdflhajklds##216459756476312'
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
 bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
 CORS(app)
 
 class User(db.Model):
@@ -78,20 +85,18 @@ def add_user():
 def verify_user():
   if request.content_type != 'application/json':
     return jsonify('Error: Data must be json')
-  
+
   post_data = request.get_json()
   username = post_data.get('username')
   password = post_data.get('password')
 
   user = db.session.query(User).filter(User.username == username).first()
 
-  if user is None:
-    return jsonify('User is not verified!')
+  if user == None or bcrypt.check_password_hash(user.password, password) == False:
+    return jsonify('User is not verified'), 401
 
-  if bcrypt.check_password_hash(user.password, password) == False:
-    return jsonify('User is not verified!')
-
-  return jsonify(user_schema.dump(user))
+  access_token = create_access_token(identity=username)
+  return jsonify(access_token=access_token) 
 
 @app.route('/user/update/<id>', methods=["PUT"])
 def updateUser(id):
