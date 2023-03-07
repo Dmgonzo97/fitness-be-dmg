@@ -123,7 +123,8 @@ def verify_user():
       return jsonify({'message': 'not a user'})
   else:
     access_token = create_access_token(identity=username)
-    return jsonify(access_token=access_token) 
+    response = jsonify(access_token=access_token)
+    return set_headers_post(response) 
 
 @app.route('/user/update/<id>', methods=["PUT"])
 def updateUser(id):
