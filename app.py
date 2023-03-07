@@ -103,10 +103,10 @@ def verify_user():
     secret = app.config['JWT_SECRET_KEY']
     decoded_token = jwt.decode(token, secret, algorithms=['HS256'])
     print(decoded_token)
-    username = decoded_token
-    user = db.session.query(User).filter(User.username == username).first()
+    decoded_username = decoded_token
+    user = db.session.query(User).filter(User.username == decoded_username).first()
     if user:
-      return jsonify({'username': username})
+      return jsonify({'username': decoded_username})
     else:
       return jsonify({'message': 'not a user'})
   else:
