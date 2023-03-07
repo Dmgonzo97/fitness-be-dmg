@@ -8,6 +8,7 @@ from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
+import jwt
 
 import os
 
@@ -90,13 +91,19 @@ def verify_user():
   post_data = request.get_json()
   username = post_data.get('username')
   password = post_data.get('password')
+  token = post_data.get('token')
 
   user = db.session.query(User).filter(User.username == username).first()
 
   if user == None or bcrypt.check_password_hash(user.password, password) == False:
     return jsonify('User is not verified'), 401
 
+  if post_data 
+
   access_token = create_access_token(identity=username)
+
+  decoded_token = jwt.decode
+
   return jsonify(access_token=access_token) 
 
 @app.route('/user/update/<id>', methods=["PUT"])
