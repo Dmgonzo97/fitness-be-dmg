@@ -95,14 +95,23 @@ def verify_user():
 
   user = db.session.query(User).filter(User.username == username).first()
 
-  if user == None or bcrypt.check_password_hash(user.password, password) == False:
-    return jsonify('User is not verified'), 401
+  if username is not None:
+    if user == None or bcrypt.check_password_hash(user.password, password) == False:
+      return jsonify('User is not verified'), 401
 
-  access_token = create_access_token(identity=username)
-
-  decoded_token = jwt.decode
-
-  return jsonify(access_token=access_token) 
+  if token != 'empty':
+    secret = app.config['JWT_SECRET_KEY']
+    decoded_token = jwt.decode(token, secret, algorithms=['HS256'])
+    print(decoded_token)
+    username = decoded_token
+    user = db.session.query(User).filter(User.username == username).first()
+    if user:
+      return jsonify({'username': username})
+    else:
+      return jsonify({'message': 'not a user'})
+  else:
+    access_token = create_access_token(identity=username)
+    return jsonify(access_token=access_token) 
 
 @app.route('/user/update/<id>', methods=["PUT"])
 def updateUser(id):
