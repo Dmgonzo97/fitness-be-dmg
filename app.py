@@ -107,9 +107,9 @@ def verify_user():
 
   user = db.session.query(User).filter(User.username == username).first()
 
-  if username is not None:
-    if user == None or bcrypt.check_password_hash(user.password, password) == False:
-      return jsonify('User is not verified'), 401
+  # if username is not None:
+  if user == None or bcrypt.check_password_hash(user.password, password) == False:
+    return jsonify('User is not verified'), 401
 
   if token != 'empty':
     secret = app.config['JWT_SECRET_KEY']
