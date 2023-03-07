@@ -60,6 +60,18 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 multiple_user_schema = UserSchema(many=True)
 
+# middleware
+
+def set_headers_post(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Methods', 'POST')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  return response
+
+# middleware
+
+# routes
+
 @app.route('/user/add', methods=['POST'])
 def add_user():
   if request.content_type != 'application/json':
