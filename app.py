@@ -98,8 +98,6 @@ def verify_user():
   if user == None or bcrypt.check_password_hash(user.password, password) == False:
     return jsonify('User is not verified'), 401
 
-  if post_data 
-
   access_token = create_access_token(identity=username)
 
   decoded_token = jwt.decode
