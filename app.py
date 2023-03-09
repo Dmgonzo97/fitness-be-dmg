@@ -124,7 +124,7 @@ def verify_user():
     return jsonify('User is not verified'), 401
 
   response = jsonify('Verification Sucessful!')
-  access_token = create_access_token(identity=user)
+  access_token = create_access_token(identity=username)
   set_access_cookies(response, access_token)
   return jsonify(access_token=access_token)
 
