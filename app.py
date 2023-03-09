@@ -18,10 +18,8 @@ app = Flask(__name__)
 # basedir = os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bmlpkrakjcqzyk:00bcf62411fc190564457c4ce69556c85c036745d5baa758b17c213b2e707a8b@ec2-18-214-134-226.compute-1.amazonaws.com:5432/detdhf7u0j65cu'
-app.config["JWT_COOKIE_SECURE"] = False
-app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config['JWT_SECRET_KEY'] = 'asdkjfhasdiukfgafsubfdhjkfbajskdfhakjsdflhajklds##216459756476312'
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
