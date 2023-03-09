@@ -1,16 +1,21 @@
+from datetime import datetime
+from datetime import timedelta
+from datetime import timezone
+
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy 
 from flask_marshmallow import Marshmallow 
 from flask_cors import CORS 
 from flask_bcrypt import Bcrypt
+
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import get_jwt_identity
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import set_access_cookies
 from flask_jwt_extended import unset_jwt_cookies
-import jwt
 
+import jwt
 import os
 
 app = Flask(__name__)
@@ -18,8 +23,10 @@ app = Flask(__name__)
 # basedir = os.path.abspath(os.path.dirname(__file__))
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://bmlpkrakjcqzyk:00bcf62411fc190564457c4ce69556c85c036745d5baa758b17c213b2e707a8b@ec2-18-214-134-226.compute-1.amazonaws.com:5432/detdhf7u0j65cu'
+app.config["JWT_COOKIE_SECURE"] = False
+app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
 app.config['JWT_SECRET_KEY'] = 'asdkjfhasdiukfgafsubfdhjkfbajskdfhakjsdflhajklds##216459756476312'
-
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=2)
 
 db = SQLAlchemy(app)
 ma = Marshmallow(app)
@@ -63,6 +70,19 @@ class UserSchema(ma.Schema):
 user_schema = UserSchema()
 multiple_user_schema = UserSchema(many=True)
 
+@app.after_request
+def refresh_expiring_token(response):
+  try:
+    exp_timestamp = get_jwt()['exp']
+    now = datetime.now(timezone.utc)
+    target_timestamp = datetime.timestamp(now + timedelta(hours=1))
+    if target_timestamp > exp_timestamp:
+      access_token = create_access_token(identity=get_jwt_identity())
+      set_access_cookies(response, access_token)
+    return response
+  except (RuntimeError, KeyError):
+    return response
+
 # routes
 
 @app.route('/user/add', methods=['POST'])
@@ -102,8 +122,17 @@ def verify_user():
   if user is None or bcrypt.check_password_hash(user.password, password) == False:
     return jsonify('User is not verified'), 401
 
-  access_token = create_access_token(identity=username)
+  response = jsonify('Verification Sucessful!')
+  access_token = create_access_token(identity=user)
+  set_access_cookies(response, access_token)
   return jsonify(access_token=access_token)
+
+@app.route('/user/logOut', methods=['POST'])
+def logOut():
+  response = jsonify('Log Out Sucessful')
+  unset_jwt_cookies(response)
+  return response
+
 
 @app.route('/user/update/<id>', methods=["PUT"])
 def updateUser(id):
