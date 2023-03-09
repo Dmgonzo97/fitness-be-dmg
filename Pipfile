@@ -15,6 +15,7 @@ psycopg2 = "*"
 bcrypt = "*"
 flask-jwt-extended = "*"
 pyjwt = "*"
+datetime = "*"
 
 [dev-packages]
 
