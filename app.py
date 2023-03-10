@@ -170,9 +170,9 @@ def get_all_users():
   result = db.session.query(User).all()
   return jsonify(multiple_user_schema.dump(result))
 
-@app.route('/user/get/<id>', methods=['GET'])
-def get_user_by_id(id):
-  user = db.session.query(User).filter(User.id == id).first()
+@app.route('/user/get/<username>', methods=['GET'])
+def get_user_by_username(username):
+  user = db.session.query(User).filter(User.username == username).first()
   return jsonify(user_schema.dump(user))
 
 @app.route('/user/delete/<id>', methods=['DELETE'])
