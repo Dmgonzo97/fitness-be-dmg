@@ -126,7 +126,7 @@ def verify_user():
   response = jsonify('Verification Sucessful!')
   access_token = create_access_token(identity=username)
   set_access_cookies(response, access_token)
-  return jsonify(access_token=access_token, user_id=User.id)
+  return jsonify({'access_token':access_token, 'user_id':User.id})
 
 @app.route('/user/logOut', methods=['POST'])
 def logOut():
