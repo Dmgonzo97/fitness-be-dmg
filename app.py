@@ -200,9 +200,9 @@ def add_blog():
 
   return jsonify(blog_schema.dump(new_blog))
 
-@app.route('/blog/get/<username>', methods=['GET'])
-def get_all_blogs(username):
-  all_blogs = db.session.query(Blog).filter(Blog.username == username)
+@app.route('/blog/get/<user_id>', methods=['GET'])
+def get_all_blogs(user_id):
+  all_blogs = db.session.query(Blog).filter(Blog.blog_user_id == user_id)
   return jsonify(multiple_blog_schema.dump(all_blogs))
 
 @app.route('/blog/get/<blog_user_id>/<id>', methods=['GET'])
