@@ -142,15 +142,17 @@ def updateUser(id):
   user = db.session.query(User).filter(User.id == id).first()
 
   post_data = request.get_json()
-  username = post_data.get('username')
-  password = post_data.get('password')
-  
-  encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
-  user.password = encrypted_password
-  user.username = username
-  updated_user = User(user.username, user.password)
+  new_username = post_data.get('username')
+  new_password = post_data.get('password')
 
-  db.session.add(updated_user)
+  # encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
+  # new_password = encrypted_password
+  # updated_user = User(username, new_password)
+
+  # db.session.add(updated_user)
+  user.update(dict(username = new_username))
+  user.update(dict(password = new_password))
+
   db.session.commit()
 
   return jsonify(user_schema.dump(updated_user))
