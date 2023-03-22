@@ -146,7 +146,9 @@ def updateUser(id):
   password = post_data.get('password')
   
   encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
-  updated_user = User(user.username, user.encrypted_password)
+  user.password = encrypted_password
+  user.username = username
+  updated_user = User(user.username, user.password)
 
   db.session.add(updated_user)
   db.session.commit()
