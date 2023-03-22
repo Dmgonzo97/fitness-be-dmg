@@ -139,12 +139,14 @@ def updateUser(id):
   if request.content_type != 'application/json':
     return jsonify('Error: Data must be json')
 
+  user = db.session.query(User).filter(User.id == id).first()
+
   post_data = request.get_json()
   username = post_data.get('username')
   password = post_data.get('password')
   
   encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
-  updated_user = User(username, encrypted_password)
+  updated_user = User(user.username, user.encrypted_password)
 
   db.session.add(updated_user)
   db.session.commit()
