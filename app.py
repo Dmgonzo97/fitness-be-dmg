@@ -134,42 +134,29 @@ def logOut():
   unset_jwt_cookies(response)
   return response
 
-@app.route('/user/update/<id>', methods=["POST"])
-def updateUser(id):
+@app.route('/user/update/<id>', methods=['POST'])
+def update_user_by_id(id):
   if request.content_type != 'application/json':
     return jsonify('Error: Data must be json')
-
-  user = db.session.query(User).filter(User.id == id).first()
+  
+  user = User.query.get(id)
 
   post_data = request.get_json()
-  new_username = post_data.get('username')
-  new_password = post_data.get('password')
+  username = post_data.get('new_username')
+  password = post_data.get('new_password')
 
-  # encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
-  # new_password = encrypted_password
-  # updated_user = User(username, new_password)
+  encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-  # db.session.add(updated_user)
-  user.update(dict(username = new_username))
-  user.update(dict(password = new_password))
+  if user:
+    user.username = username
+    user.password = encrypted_password
 
-  db.session.commit()
-
-  return jsonify(user_schema.dump(updated_user))
-
-# @app.route('/user/pwupdate/<id>', methods=["PUT"])
-# def updatePW(id):
-#   if request.content_type != 'application/json':
-#     return jsonify('Error: Data must be json')
-    
-#   password = request.get_json().get('password')
-#   user = db.session.query(User).filter(User.id == id).first()
-#   encrypted_password = bcrypt.generate_password_hash(password).decode('utf-8')
-#   user.password = encrypted_password
-  
-#   db.session.commit()
-
-#   return jsonify(user_schema.dump(user))
+    db.session.commit()
+    response = jsonify(user_schema.dump(user))
+    return response
+  else:
+    response = jsonify('User not found')
+    return response
 
 @app.route('/user/get', methods=['GET'])
 def get_all_users():
